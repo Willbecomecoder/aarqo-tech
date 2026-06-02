@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aarqo.tech - Cinematic AI Hero</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Rajdhani:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-ultra-dark: #050505;
+            --accent-orange: #FF7A00;
+            --text-primary: #F5F0E8;
+            --text-secondary: #A39F96;
+            --ff-heading: 'Syne', sans-serif;
+            --ff-body: 'Rajdhani', sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: var(--ff-body);
+            background: var(--bg-ultra-dark);
+            overflow: hidden;
+        }
+
+        /* Canvas */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 1;
+        }
+
+
+        /* Loading indicator */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Canvas -->
+    <canvas id="canvas"></canvas>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@r128/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@r128/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@r128/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <script>
+        // ===== THREE.JS SCENE SETUP =====
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.setClearColor(0x050505, 1);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+        camera.position.set(0, 1.5, 8);
+        camera.lookAt(0, 0, 0);
+
+        // ===== LIGHTING =====
+        // Key light (from right-front)
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        keyLight.position.set(8, 6, 8);
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.width = 2048;
+        keyLight.shadow.mapSize.height = 2048;
+        scene.add(keyLight);
+
+        // Fill light (soft from left)
+        const fillLight = new THREE.DirectionalLight(0xff6600, 0.6);
+        fillLight.position.set(-8, 4, 5);
+        scene.add(fillLight);
+
+        // Rim light (from back)
+        const rimLight = new THREE.DirectionalLight(0xFF7A00, 0.8);
+        rimLight.position.set(0, 3, -10);
+        scene.add(rimLight);
+
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0x1a1410, 0.4);
+        scene.add(ambientLight);
+
+        // Orange glow light
+        const glowLight = new THREE.PointLight(0xFF7A00, 2, 30);
+        glowLight.position.set(0, 1, 2);
+        scene.add(glowLight);
+
+        // ===== ROBOT CONSTRUCTION =====
+        const robot = new THREE.Group();
+        scene.add(robot);
+
+        // Robot materials
+        const metalMaterial = new THREE.MeshStandardMaterial({
+            color: 0x1a1a1a,
+            metalness: 0.95,
+            roughness: 0.1,
+            side: THREE.DoubleSide,
+            emissive: 0xFF7A00,
+            emissiveIntensity: 0.2
+        });
+
+        // Head
+        const headGeometry = new THREE.BoxGeometry(0.6, 0.7, 0.5);
+        const head = new THREE.Mesh(headGeometry, metalMaterial);
+        head.position.y = 1.2;
+        head.castShadow = true;
+        head.receiveShadow = true;
+        robot.add(head);
+
+        // Eyes - orange glowing
+        const eyeGeometry = new THREE.SphereGeometry(0.12, 8, 8);
+        const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0xFF7A00 });
+        const eyeLeft = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        eyeLeft.position.set(-0.15, 1.3, 0.28);
+        robot.add(eyeLeft);
+
+        const eyeRight = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        eyeRight.position.set(0.15, 1.3, 0.28);
+        robot.add(eyeRight);
+
+        // Torso
+        const torsoGeometry = new THREE.BoxGeometry(0.5, 0.9, 0.4);
+        const torso = new THREE.Mesh(torsoGeometry, metalMaterial);
+        torso.position.y = 0.3;
+        torso.castShadow = true;
+        torso.receiveShadow = true;
+        robot.add(torso);
+
+        // Left Arm
+        const leftArmGeometry = new THREE.BoxGeometry(0.15, 0.8, 0.15);
+        const leftArm = new THREE.Mesh(leftArmGeometry, metalMaterial);
+        leftArm.position.set(-0.35, 0.4, 0);
+        leftArm.castShadow = true;
+        leftArm.receiveShadow = true;
+        robot.add(leftArm);
+
+        // Right Arm (pointing toward panels)
+        const rightArmGeometry = new THREE.BoxGeometry(0.15, 0.8, 0.15);
+        const rightArm = new THREE.Mesh(rightArmGeometry, metalMaterial);
+        rightArm.position.set(0.35, 0.4, 0);
+        rightArm.castShadow = true;
+        rightArm.receiveShadow = true;
+        robot.add(rightArm);
+
+        // Left Hand
+        const leftHandGeometry = new THREE.BoxGeometry(0.12, 0.2, 0.12);
+        const leftHand = new THREE.Mesh(leftHandGeometry, metalMaterial);
+        leftHand.position.set(-0.35, -0.25, 0);
+        leftHand.castShadow = true;
+        leftHand.receiveShadow = true;
+        robot.add(leftHand);
+
+        // Right Hand (interactive)
+        const rightHandGeometry = new THREE.BoxGeometry(0.12, 0.2, 0.12);
+        const rightHand = new THREE.Mesh(rightHandGeometry, metalMaterial);
+        rightHand.position.set(0.35, -0.25, 0);
+        rightHand.castShadow = true;
+        rightHand.receiveShadow = true;
+        rightHand.userData.isRightHand = true;
+        robot.add(rightHand);
+
+        // Legs
+        const legGeometry = new THREE.BoxGeometry(0.15, 0.6, 0.15);
+        const leftLeg = new THREE.Mesh(legGeometry, metalMaterial);
+        leftLeg.position.set(-0.15, -0.5, 0);
+        leftLeg.castShadow = true;
+        leftLeg.receiveShadow = true;
+        robot.add(leftLeg);
+
+        const rightLeg = new THREE.Mesh(legGeometry, metalMaterial);
+        rightLeg.position.set(0.15, -0.5, 0);
+        rightLeg.castShadow = true;
+        rightLeg.receiveShadow = true;
+        robot.add(rightLeg);
+
+        // Position robot slightly off-center
+        robot.position.set(-1.5, 0, 0);
+
+        // ===== HOLOGRAPHIC PANELS =====
+        const panelsGroup = new THREE.Group();
+        scene.add(panelsGroup);
+
+        const panelData = [
+            { pos: [2.5, 2, 0], text: 'AI Automation', delay: 0 },
+            { pos: [2.2, -0.5, 1], text: 'AI UGC Ads', delay: 0.2 },
+            { pos: [1.5, 0.5, 1.5], text: 'AI Websites', delay: 0.4 }
+        ];
+
+        const panels = [];
+
+        panelData.forEach((data, index) => {
+            const panelGroup = new THREE.Group();
+            panelGroup.position.set(...data.pos);
+
+            // Panel frame
+            const panelGeometry = new THREE.PlaneGeometry(1.2, 0.6);
+            const panelMaterial = new THREE.MeshStandardMaterial({
+                color: 0x0a0a0a,
+                metalness: 0.3,
+                roughness: 0.8,
+                emissive: 0x1a3a3a,
+                emissiveIntensity: 0.3,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            const panel = new THREE.Mesh(panelGeometry, panelMaterial);
+            panel.castShadow = true;
+            panel.receiveShadow = true;
+            panelGroup.add(panel);
+
+            // Glow edge
+            const edgeGeometry = new THREE.BufferGeometry();
+            const edgePositions = new Float32Array([
+                -0.6, -0.3, 0.01,
+                0.6, -0.3, 0.01,
+                0.6, 0.3, 0.01,
+                -0.6, 0.3, 0.01
+            ]);
+            edgeGeometry.setAttribute('position', new THREE.BufferAttribute(edgePositions, 3));
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0xFF7A00,
+                linewidth: 2,
+                transparent: true,
+                opacity: 0.6
+            });
+            const edgeLines = new THREE.LineLoop(edgeGeometry, lineMaterial);
+            edgeLines.position.z = 0.02;
+            panelGroup.add(edgeLines);
+
+            // Glow light for panel
+            const panelGlow = new THREE.PointLight(0xFF7A00, 1, 15);
+            panelGlow.position.set(0, 0, 0.5);
+            panelGroup.add(panelGlow);
+
+            panelGroup.userData = {
+                baseRotation: [Math.random() * 0.3 - 0.15, Math.random() * 0.3 - 0.15, 0],
+                text: data.text,
+                glowLight: panelGlow,
+                originalOpacity: 0.7
+            };
+
+            panelsGroup.add(panelGroup);
+            panels.push(panelGroup);
+        });
+
+        // ===== PARTICLE SYSTEM =====
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particleCount = 150;
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 20;
+            positions[i + 1] = (Math.random() - 0.5) * 15;
+            positions[i + 2] = (Math.random() - 0.5) * 15;
+
+            velocities[i] = (Math.random() - 0.5) * 0.02;
+            velocities[i + 1] = (Math.random() - 0.5) * 0.02;
+            velocities[i + 2] = (Math.random() - 0.5) * 0.02;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            color: 0xFF7A00,
+            size: 0.08,
+            sizeAttenuation: true,
+            transparent: true,
+            opacity: 0.4
+        });
+
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
+
+        // ===== NEURAL NETWORK BACKGROUND =====
+        function createNeuralNetwork() {
+            const networkGeometry = new THREE.BufferGeometry();
+            const lines = [];
+            const nodeCount = 30;
+            const nodes = [];
+
+            // Generate nodes
+            for (let i = 0; i < nodeCount; i++) {
+                nodes.push(new THREE.Vector3(
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20 - 15
+                ));
+            }
+
+            // Create connections
+            const connectionDistance = 8;
+            for (let i = 0; i < nodes.length; i++) {
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const distance = nodes[i].distanceTo(nodes[j]);
+                    if (distance < connectionDistance) {
+                        lines.push(nodes[i].x, nodes[i].y, nodes[i].z);
+                        lines.push(nodes[j].x, nodes[j].y, nodes[j].z);
+                    }
+                }
+            }
+
+            networkGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(lines), 3));
+
+            const networkMaterial = new THREE.LineBasicMaterial({
+                color: 0xFF7A00,
+                transparent: true,
+                opacity: 0.15,
+                linewidth: 1
+            });
+
+            const networkLines = new THREE.LineSegments(networkGeometry, networkMaterial);
+            scene.add(networkLines);
+
+            // Store nodes for animation
+            return { nodes, lines: networkLines };
+        }
+
+        const network = createNeuralNetwork();
+
+        // ===== REFLECTIVE FLOOR =====
+        const floorGeometry = new THREE.PlaneGeometry(40, 40);
+        const floorMaterial = new THREE.MeshStandardMaterial({
+            color: 0x0a0a0a,
+            metalness: 0.5,
+            roughness: 0.7,
+            side: THREE.DoubleSide,
+            transparent: true,
+            opacity: 0.3
+        });
+
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -1.2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // ===== ANIMATION LOOP =====
+        let time = 0;
+        const animationData = {
+            panelInteractions: [false, false, false]
+        };
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+
+            // Robot breathing animation
+            robot.position.y = 0 + Math.sin(time * 0.8) * 0.1;
+
+            // Robot subtle rotation
+            robot.rotation.y = Math.sin(time * 0.3) * 0.1;
+
+            // Arm animation - reaching toward panels
+            const rightArm = robot.children.find(c => c.position.x > 0.3 && c.position.y > 0.2);
+            if (rightArm) {
+                rightArm.rotation.z = Math.sin(time * 0.6) * 0.2;
+            }
+
+            // Particles floating
+            const positionAttribute = particlesGeometry.getAttribute('position');
+            const pos = positionAttribute.array;
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                pos[i] += velocities[i];
+                pos[i + 1] += velocities[i + 1];
+                pos[i + 2] += velocities[i + 2];
+
+                if (pos[i] > 10) velocities[i] *= -1;
+                if (pos[i] < -10) velocities[i] *= -1;
+                if (pos[i + 1] > 7.5) velocities[i + 1] *= -1;
+                if (pos[i + 1] < -7.5) velocities[i + 1] *= -1;
+                if (pos[i + 2] > 7.5) velocities[i + 2] *= -1;
+                if (pos[i + 2] < -7.5) velocities[i + 2] *= -1;
+            }
+            positionAttribute.needsUpdate = true;
+
+            // Holographic panel animations
+            panels.forEach((panel, index) => {
+                // Float animation
+                panel.position.y += Math.sin(time * 0.6 + index) * 0.001;
+
+                // Rotation animation
+                panel.rotation.x = panel.userData.baseRotation[0] + Math.sin(time * 0.4 + index) * 0.05;
+                panel.rotation.y = panel.userData.baseRotation[1] + Math.sin(time * 0.5 + index) * 0.08;
+
+                // Glow pulsing
+                const glowIntensity = 0.8 + Math.sin(time * 2 + index * 1.5) * 0.4;
+                panel.userData.glowLight.intensity = glowIntensity;
+
+                // Opacity pulsing
+                const panelMesh = panel.children[0];
+                panelMesh.material.opacity = 0.5 + Math.sin(time * 1.5 + index) * 0.2;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ===== PANEL INTERACTION =====
+        panels.forEach((panel, index) => {
+            setTimeout(() => {
+                // Simulate interaction - panel lights up
+                setInterval(() => {
+                    const panelMesh = panel.children[0];
+                    const originalEmissive = panel.userData.glowLight.intensity;
+
+                    panel.userData.glowLight.intensity = 3;
+                    setTimeout(() => {
+                        panel.userData.glowLight.intensity = originalEmissive;
+                    }, 300);
+                }, 3000 + index * 1000);
+            }, 1000 + index * 500);
+        });
+
+
+        // ===== HANDLE RESIZE =====
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        });
+
+        // Mobile-specific adjustments
+        if (window.innerWidth < 768) {
+            camera.position.set(0, 1.2, 9);
+            robot.position.x = -0.5;
+            panels.forEach(panel => {
+                panel.scale.set(0.8, 0.8, 0.8);
+            });
+        }
+    </script>
+</body>
+</html>
