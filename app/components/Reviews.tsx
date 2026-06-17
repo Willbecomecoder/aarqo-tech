@@ -24,6 +24,13 @@ const defaultEligibility: ReviewEligibility = {
 };
 
 const placeholderCards = [1, 2, 3];
+const debugPrefix = "[reviews-ui]";
+
+function debugLog(message: string, data?: unknown) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`${debugPrefix} ${message}`, data ?? "");
+  }
+}
 
 function getDisplayName(metadata: Record<string, unknown> | undefined, email?: string) {
   const name = metadata?.full_name ?? metadata?.name;
@@ -51,6 +58,13 @@ async function getSessionContext() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
+
+  debugLog("session context", {
+    hasSession: Boolean(session),
+    userId: session?.user?.id ?? null,
+    email: session?.user?.email ?? null,
+    hasToken: Boolean(session?.access_token),
+  });
 
   return {
     token: session?.access_token ?? null,
@@ -331,6 +345,10 @@ export default function Reviews() {
     setLoadError("");
 
     const { token, user } = await getSessionContext();
+    debugLog("loadReviews:start", {
+      hasToken: Boolean(token),
+      user,
+    });
     setCurrentUser(user);
 
     const response = await fetch("/api/reviews", {
@@ -338,6 +356,14 @@ export default function Reviews() {
       cache: "no-store",
     });
     const payload = (await response.json()) as ReviewsResponse;
+
+    debugLog("loadReviews:response", {
+      ok: response.ok,
+      status: response.status,
+      reviewCount: payload.reviews?.length ?? 0,
+      eligibility: payload.eligibility,
+      error: payload.error,
+    });
 
     if (!response.ok) {
       throw new Error(payload.error ?? "Unable to load reviews right now.");
@@ -367,7 +393,14 @@ export default function Reviews() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      debugLog("auth state changed", {
+        event,
+        hasSession: Boolean(session),
+        userId: session?.user?.id ?? null,
+        email: session?.user?.email ?? null,
+      });
+
       loadReviews().catch((error) => {
         setLoadError(
           error instanceof Error
@@ -386,6 +419,7 @@ export default function Reviews() {
   async function signInWithGoogle() {
     setAuthLoading(true);
     setLoadError("");
+    debugLog("signInWithGoogle:start");
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -395,6 +429,7 @@ export default function Reviews() {
     });
 
     if (error) {
+      debugLog("signInWithGoogle:error", error);
       setLoadError(error.message);
       setAuthLoading(false);
     }
@@ -402,6 +437,7 @@ export default function Reviews() {
 
   async function signOut() {
     setAuthLoading(true);
+    debugLog("signOut:start");
     await supabase.auth.signOut();
     setCurrentUser(null);
     setAuthLoading(false);
@@ -409,6 +445,11 @@ export default function Reviews() {
 
   async function submitReview(payload: { rating: number; review_text: string }) {
     const { token } = await getSessionContext();
+    debugLog("submitReview:start", {
+      hasToken: Boolean(token),
+      rating: payload.rating,
+      reviewLength: payload.review_text.length,
+    });
 
     if (!token) {
       throw new Error("Please sign in with Google before submitting a review.");
@@ -423,6 +464,13 @@ export default function Reviews() {
       body: JSON.stringify(payload),
     });
     const result = await response.json();
+
+    debugLog("submitReview:response", {
+      ok: response.ok,
+      status: response.status,
+      error: result.error,
+      reviewId: result.review?.id,
+    });
 
     if (!response.ok) {
       throw new Error(result.error ?? "Unable to submit your review right now.");
@@ -439,11 +487,24 @@ export default function Reviews() {
     });
   }
 
-  const canSubmitReview =
-    eligibility.isLoggedIn &&
-    eligibility.isVerifiedClient &&
-    !eligibility.hasReviewed &&
-    currentUser;
+  const canShowReviewForm = Boolean(
+    eligibility.isLoggedIn && !eligibility.hasReviewed && currentUser,
+  );
+
+  debugLog("render state", {
+    isLoading,
+    reviewCount: reviews.length,
+    eligibility,
+    hasCurrentUser: Boolean(currentUser),
+    canShowReviewForm,
+    reasonHidden: canShowReviewForm
+      ? null
+      : {
+          notLoggedIn: !eligibility.isLoggedIn,
+          alreadyReviewed: eligibility.hasReviewed,
+          missingCurrentUser: !currentUser,
+        },
+  });
 
   return (
     <section className={styles.section} id="reviews" aria-labelledby="reviews-title">
@@ -545,7 +606,7 @@ export default function Reviews() {
           <p className={styles.note}>You have already submitted your verified review.</p>
         ) : null}
 
-        {canSubmitReview ? (
+        {canShowReviewForm && currentUser ? (
           <ReviewForm currentUser={currentUser} onSubmit={submitReview} />
         ) : null}
       </motion.div>
