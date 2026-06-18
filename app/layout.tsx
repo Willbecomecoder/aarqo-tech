@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import{ GoogleAnalytics } from '@next/third-parties/google'
 export const metadata = {
-  title: "AarqoTech | AI Automation, Websites & AI UGC Ads",
+  title: "AarqoTech | AI Automation, Websites, AI Bots & AI UGC Ads",
   description:
     "AarqoTech helps businesses with AI Automation, Modern Websites, AI Bots and High-Converting AI UGC Ads.",
 
