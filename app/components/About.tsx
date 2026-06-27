@@ -26,7 +26,7 @@ export default function About() {
 
         {/* Left — About Text */}
         <div className="about-left">
-          <h2 className="about-title">About Aarqo.Tech</h2>
+          <h2 className="about-title">About Aarqotech</h2>
           <p className="about-desc">
             We build high-converting websites, AI automations, intelligent bots,
             and AI-generated UGC ads that help businesses attract customers,
