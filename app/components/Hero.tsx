@@ -1,28 +1,37 @@
-﻿export default function Hero() {
-  return (
-    <section className="hero-section" id="hero">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        poster="/videos/poster.jpg"
-        className="hero-video"
-      >
-        <source src="/videos/hero.mp4" type="video/mp4" />
-      </video>
-      <a
-href="https://wa.me/919012245439?text=👋%20Namaste!%0A%0AAapka%20AarqoTech%20me%20swagat%20hai.%20😊%0A%0AKripya%20niche%20di%20gayi%20details%20share%20karein:%0A%0A👤%20Aapka%20Naam:%0A%0A🏢%20Aapke%20Business%20%2F%20Brand%20ka%20Naam:%0A%0A💻%20Aapko%20kis%20service%20ki%20zarurat%20hai%3F%0A(Website%2C%20AI%20Automation%2C%20AI%20Chatbot%2C%20ya%20kuch%20aur)%0A%0A📝%20Apne%20project%20ke%20baare%20me%20thoda%20batayein:%0A%0A💰%20Approx%20Budget:%0A%0AJaise%20hi%20hume%20aapki%20details%20milengi%2C%20hum%20jaldi%20aapse%20contact%20karenge.%20🚀%0A%0ADhanyavaad!%20🙌"  
-  className="whatsapp-card"
->
-  <div className="wa-dot"></div>
+"use client";
 
-  <div>
-    <p className="wa-label">Available Now</p>
-    <h4>Chat on WhatsApp</h4>
-  </div>
-</a>
+import Navbar from "./Navbar";
+import HeroContent from "./HeroContent";
+import RobotVisual from "./RobotVisual";
+
+export default function Hero() {
+  return (
+    <section id="home" className="relative w-full min-h-screen min-h-[100svh] bg-transparent overflow-hidden flex flex-col justify-between select-none">
+      {/* Layer 1: Fixed Transparent Top Navbar */}
+      <Navbar />
+
+      {/* Layer 2: Main Hero Container Overlaying Unified Point Cloud Background */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full flex-1 flex flex-col justify-center pt-24 sm:pt-28 pb-12 sm:pb-16 px-6 sm:px-12 my-auto">
+        
+        {/* DESKTOP LAYOUT (>= 768px): 2-Column Grid (45% Left Text Column, 55% Right Robot Column) */}
+        <div className="hidden md:grid md:grid-cols-12 gap-8 items-center w-full">
+          {/* Left Side Text Content */}
+          <div className="md:col-span-6 lg:col-span-5 w-full">
+            <HeroContent />
+          </div>
+
+          {/* Right Side Waving Robot */}
+          <div className="md:col-span-6 lg:col-span-7 w-full flex justify-center lg:justify-end">
+            <RobotVisual />
+          </div>
+        </div>
+
+        {/* MOBILE LAYOUT (< 768px): Vertical Sequence (HI MY NAME IS SHIVANI -> Robot -> Description -> Buttons) */}
+        <div className="md:hidden flex flex-col items-center justify-center text-center w-full">
+          <HeroContent />
+        </div>
+
+      </div>
     </section>
   );
 }
