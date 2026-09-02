@@ -1,29 +1,40 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import{ GoogleAnalytics } from '@next/third-parties/google'
 export const metadata = {
-  title: "AarqoTech | AI Automation, Websites, AI Bots & AI UGC Ads",
+  title: "AarqoTech | AI Automation for Hospitality and Beauty Business",
   description:
-    "AarqoTech helps businesses with AI Automation, Modern Websites, AI Bots and High-Converting AI UGC Ads.",
+    "AarqoTech builds AI automation for hospitality and beauty businesses — chatbots, AI calling agents, WhatsApp automation and websites for restaurants, salons and nightclubs.",
 
   openGraph: {
     title: "AarqoTech",
     description:
-      "AI Automation, Websites, AI Bots and AI UGC Ads.",
+      "AI automation for hospitality and beauty business — chatbots, AI calling agents, WhatsApp automation and websites.",
     url: "https://www.aarqotech.com",
     siteName: "AarqoTech",
     type: "website",
   },
 };
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const clashDisplay = localFont({
+  variable: "--font-clash-display",
+  display: "swap",
+  src: [
+    { path: "./fonts/ClashDisplay-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/ClashDisplay-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/ClashDisplay-700.woff2", weight: "700", style: "normal" },
+  ],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const generalSans = localFont({
+  variable: "--font-general-sans",
+  display: "swap",
+  src: [
+    { path: "./fonts/GeneralSans-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/GeneralSans-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/GeneralSans-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/GeneralSans-700.woff2", weight: "700", style: "normal" },
+  ],
 });
 
 
@@ -36,7 +47,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${clashDisplay.variable} ${generalSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
       <GoogleAnalytics gaId="G-3RQRYW2BT0" />

@@ -6,8 +6,6 @@ import RobotVisual from "./RobotVisual";
 
 export default function HeroContent() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const nameRef = useRef<HTMLHeadingElement>(null);
   const robotWrapRef = useRef<HTMLDivElement>(null);
   const subtitleRef = useRef<HTMLHeadingElement>(null);
   const supportRef = useRef<HTMLParagraphElement>(null);
@@ -18,22 +16,10 @@ export default function HeroContent() {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
       tl.fromTo(
-        headlineRef.current,
-        { opacity: 0, y: 25 },
-        { opacity: 1, y: 0, duration: 0.5, delay: 0.2 }
+        robotWrapRef.current,
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.7, delay: 0.2 }
       )
-        .fromTo(
-          nameRef.current,
-          { opacity: 0, scale: 0.95, y: 20 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.6 },
-          "-=0.2"
-        )
-        .fromTo(
-          robotWrapRef.current,
-          { opacity: 0, scale: 0.9, y: 20 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.7 },
-          "-=0.3"
-        )
         .fromTo(
           subtitleRef.current,
           { opacity: 0, y: 20 },
@@ -60,29 +46,12 @@ export default function HeroContent() {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col items-center md:items-start text-center md:text-left space-y-6 sm:space-y-8 z-20 w-full"
+      className="flex flex-col items-center md:items-start text-center md:text-left space-y-4 sm:space-y-8 z-20 w-full"
     >
-      {/* ZONE 1 — INTRODUCTION (Top) */}
-      <div className="space-y-1 sm:space-y-3 w-full text-center md:text-left">
-        <h2
-          ref={headlineRef}
-          className="text-2xl sm:text-4xl lg:text-5xl font-black italic tracking-wide text-slate-100 uppercase opacity-0"
-        >
-          HI, MY NAME IS
-        </h2>
-
-        <h1
-          ref={nameRef}
-          className="text-5xl sm:text-8xl lg:text-9xl xl:text-[10rem] font-black tracking-tight uppercase bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(236,72,153,0.45)] opacity-0 leading-none inline-block whitespace-nowrap"
-        >
-          SHIVANI
-        </h1>
-      </div>
-
       {/* ZONE 2 — ROBOT EXPERIENCE (Center: ~55-60% Viewport Width Centerpiece) */}
       <div
         ref={robotWrapRef}
-        className="md:hidden w-full max-w-[230px] sm:max-w-[280px] py-4 my-2 flex justify-center opacity-0"
+        className="md:hidden w-full max-w-[210px] sm:max-w-[260px] py-0 my-0 sm:py-4 sm:my-2 flex justify-center opacity-0"
       >
         <RobotVisual />
       </div>
@@ -91,7 +60,7 @@ export default function HeroContent() {
       <div className="space-y-4 max-w-2xl text-center md:text-left">
         <h3
           ref={subtitleRef}
-          className="text-base sm:text-2xl lg:text-3xl font-extrabold text-gray-100 uppercase tracking-wide leading-snug opacity-0"
+          className="text-[clamp(1.25rem,3.4vw,3rem)] md:text-[clamp(1.75rem,3.4vw,3rem)] font-extrabold text-gray-100 uppercase tracking-wide leading-[1.07] opacity-0"
         >
           I BUILD AI-POWERED WEBSITES, AUTOMATIONS & INTELLIGENT DIGITAL SOLUTIONS.
         </h3>

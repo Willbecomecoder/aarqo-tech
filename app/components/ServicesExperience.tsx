@@ -14,7 +14,7 @@ const servicesList = [
     num: "01",
     title: "CHATBOTS",
     description:
-      "AI-powered chat systems that answer customer questions, capture leads and provide instant support.",
+      "Need a chatbot for your restaurant website? We build AI chat systems that answer questions, capture leads and provide instant support.",
     icon: (
       <svg className="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -26,7 +26,7 @@ const servicesList = [
     num: "02",
     title: "AI AGENTS",
     description:
-      "Intelligent AI agents that understand conversations, handle tasks and assist customers automatically.",
+      "We build AI that follows up with leads automatically, so intelligent agents handle conversations, tasks and customer replies without you lifting a finger.",
     icon: (
       <svg className="w-8 h-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m14-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -38,7 +38,7 @@ const servicesList = [
     num: "03",
     title: "AI AUTOMATION",
     description:
-      "Automated workflows that connect your business tools, eliminate repetitive work and save time.",
+      "Want to automate WhatsApp messages for your business? We connect your tools with automated workflows that eliminate repetitive work and save time.",
     icon: (
       <svg className="w-8 h-8 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -50,7 +50,7 @@ const servicesList = [
     num: "04",
     title: "WEBSITES",
     description:
-      "Modern, high-converting websites designed to create a strong digital presence and generate leads.",
+      "Need a website for your beauty salon with online booking? We design modern, high-converting websites that create a strong digital presence and generate leads.",
     icon: (
       <svg className="w-8 h-8 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -62,7 +62,7 @@ const servicesList = [
     num: "05",
     title: "AI CALLING AGENTS",
     description:
-      "AI voice agents that can handle customer calls, qualify leads, answer questions and automate conversations.",
+      "Want AI that answers phone calls for your restaurant? Our voice agents handle customer calls, qualify leads, answer questions and automate conversations.",
     icon: (
       <svg className="w-8 h-8 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

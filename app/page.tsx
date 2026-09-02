@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Hero from "./components/Hero";
+import FAQSection from "./components/FAQSection";
 
 // Lazy load below-the-fold heavy components for instant initial page load!
 const MorphingParticleCanvas = dynamic(
@@ -38,6 +39,9 @@ export default function Home() {
 
       {/* 4. Projects Section (Lazy Loaded Showcase) */}
       <ProjectsSection />
+
+      {/* 4.5. FAQ Section (SEO FAQPage schema) */}
+      <FAQSection />
 
       {/* 5. Contact Section (Lazy Loaded Form & Server Email API) */}
       <ContactSection />
