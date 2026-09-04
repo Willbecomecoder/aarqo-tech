@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       const resend = new Resend(resendApiKey);
 
       await resend.emails.send({
-        from: "AarqoTech Leads <onboarding@resend.dev>",
+        from: "AarqoTech Leads <leads@aarqotech.com>",
         to: [targetEmail],
         replyTo: email,
         subject: `New AarqoTech Website Lead – ${name}`,
