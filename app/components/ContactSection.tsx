@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 
+const FOOTER_BG_VIDEO =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260330_153826_e9005cf7-a1c7-4c7d-886f-fea22d644a9c.mp4";
+
 export default function ContactSection() {
   const [formData, setFormData] = useState({
     name: "",
@@ -54,7 +57,8 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="relative w-full py-28 px-6 sm:px-12 lg:px-20 z-10 bg-[#030712]">
+    <>
+    <section id="contact" className="relative w-full py-28 px-6 sm:px-12 lg:px-20 z-10 bg-transparent">
       <div className="max-w-4xl mx-auto space-y-12">
         
         {/* Section Header */}
@@ -199,8 +203,35 @@ export default function ContactSection() {
           )}
         </div>
 
-        {/* Footer Section */}
-        <div className="pt-12 flex flex-col items-center justify-center space-y-4 text-center text-xs font-mono text-gray-400 uppercase tracking-widest border-t border-white/10">
+      </div>
+    </section>
+
+    {/* Footer — its own looping video background, full width.
+        z-0 (below the contact section's z-10) so the video can reach up behind the Send Message button. */}
+    <footer className="relative isolate z-0 w-full px-6 sm:px-12 lg:px-20 py-16 sm:py-20">
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 -top-56 sm:-top-64 -z-10 pointer-events-none overflow-hidden"
+        style={{
+          // Fade the top edge so the extended video blends into the section above
+          maskImage: "linear-gradient(to bottom, transparent 0%, #000 35%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, #000 35%)",
+        }}
+      >
+        <video
+          className="absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+          src={FOOTER_BG_VIDEO}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+        {/* Dark wash so footer text stays readable over the footage */}
+        <div className="absolute inset-0 bg-[#030712]/50" />
+      </div>
+
+      <div className="max-w-4xl mx-auto flex flex-col items-center justify-center space-y-4 text-center text-xs font-mono text-gray-400 uppercase tracking-widest">
           {/* Social Links Row */}
           <div className="flex items-center justify-center gap-3.5">
             {/* 1. Instagram */}
@@ -230,9 +261,8 @@ export default function ContactSection() {
             </a>
           </div>
           <p>© {new Date().getFullYear()} AARQOTECH – AI-POWERED WEBSITES, AUTOMATION & INTELLIGENT DIGITAL SOLUTIONS. ALL RIGHTS RESERVED.</p>
-        </div>
-
       </div>
-    </section>
+    </footer>
+    </>
   );
 }
