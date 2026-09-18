@@ -95,7 +95,7 @@ export default function ServicesExperience() {
   }, []);
 
   return (
-    <section id="services" ref={containerRef} className="relative w-full z-10 py-24 sm:py-32 px-6 sm:px-12 lg:px-20 bg-[#030712] border-t border-white/5">
+    <section id="services" ref={containerRef} className="relative w-full z-10 py-24 sm:py-32 px-6 sm:px-12 lg:px-20 bg-transparent border-t border-white/5">
       {/* Section Header */}
       <div className="max-w-4xl mx-auto text-center space-y-4 pb-16">
         <span className="px-4 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-extrabold text-xs tracking-widest uppercase backdrop-blur-md">
